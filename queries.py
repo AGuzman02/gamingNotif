@@ -26,20 +26,41 @@ class DatabaseQueries:
             print(f"Error inserting member {member.name}: {e}")
             return False
         
-    async def logArrivalTime(self, member) -> None:
+    async def logArrivalTime(self, member) -> bool:
         # Insert member into arrival time
-        
-        pass
+        try:
+            self.supabase.table("timeLog").insert([{"memberId" : member.id}]).execute()
+            return True
+        except Exception as e:
+            print(f"Error time log {member.name}: {e}")
+            return False
     
-    async def logLeaveTime(self, member) -> None:
-        #Insert member into leaving time
-        
-        
-        pass
-    
+    async def logLeaveTime(self, member) -> bool:
+        try:
+            data = self.supabase.table("timeLog").select("id").eq("memberId", member.id).order("arrivalTime", desc=True).limit(1).execute()
+            timeId = data.data[0]["id"]
+            self.supabase.table("timeLog").update({"leavingTime": "now()"}).eq("id", timeId).execute()
+            return True
+        except Exception as e:
+            print(f"Error leaving time log {member.name}: {e}")
+            return False
 
-    async def getLastArrivaAndLeave(self, member) -> Dict:
-        # getArrivalTime left join leaveTime
-        # Return row with biggest leftAt
-        # Return row with biggest arrivalTime
-        pass
+    async def logGameTime(self, member) -> bool:
+        try:
+            # Call the stored procedure
+            result = self.supabase.rpc('get_session_duration_seconds', {'recievedmemberid': member.id}).execute()
+            data = self.supabase.table("Members").select("gameTime").eq("memberId", member.id).execute()
+
+            data = data.data[0]["gameTime"] if data.data else 0.0
+            duration = float(result.data) if result.data else 0.0
+
+            if data is not None:
+                duration += float(data)
+            self.supabase.table("Members").update({"gameTime": duration}).eq("memberId", member.id).execute()
+
+            if duration > 0:
+                print(f"{member.name} played for {duration:.1f} seconds")
+            return True
+        except Exception as e:
+            print(f"Error calculating game time for {member.name}: {e}")
+            return False
