@@ -1,5 +1,5 @@
 import discord
-from utils import NotificationManager, is_user_joining_voice, is_second_person_in_channel, get_arrival_time, is_user_leaving_voice, log_game_time
+from utils import NotificationManager, is_user_joining_voice, is_second_person_in_channel, is_user_leaving_voice, handleVoiceJoin, handleVoiceLeave
 from queries import DatabaseQueries
 
 class BotEvents:
@@ -30,10 +30,10 @@ class BotEvents:
     async def on_voice_state_update(self, member, before, after):
         """Handle voice state updates"""
         # Only log arrival time when joining
+        # await self.db.logArrivalTime(member)
+
         if is_user_joining_voice(before, after):
-            if not await self.db.existsMember(member):
-              await self.db.newMember(member)
-            get_arrival_time(member, self.log_file)
+            await handleVoiceJoin(member, self.db)
             if is_second_person_in_channel(after.channel):
                 # Check cooldown
                 if self.notification_manager.is_on_cooldown():
@@ -44,4 +44,5 @@ class BotEvents:
                 await self.notification_manager.send_notifications(member, after.channel.name)
         
         if is_user_leaving_voice(before, after):
-            log_game_time(member, self.log_file, self.gameplay_time_file)
+            await handleVoiceLeave(member, self.db)
+            
