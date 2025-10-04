@@ -8,7 +8,7 @@ from queries import DatabaseQueries
 class NotificationManager:
     def __init__(self):
         self.last_notification_time = 0
-        self.COOLDOWN_SECONDS = 3600
+        self.COOLDOWN_SECONDS = 3600 * 4
         self.dmGroup = []
     
     def is_on_cooldown(self):
@@ -24,7 +24,7 @@ class NotificationManager:
         """Send notifications to all DM group members"""
         for group_member in self.dmGroup:
             try:
-                await group_member.send(f'{member.name} joined {channel_name}')
+                await group_member.send(f'Gaming time in "{channel_name}" with {member.name}!')
             except discord.Forbidden:
                 print(f"Cannot send DM to {group_member.name}")
     
