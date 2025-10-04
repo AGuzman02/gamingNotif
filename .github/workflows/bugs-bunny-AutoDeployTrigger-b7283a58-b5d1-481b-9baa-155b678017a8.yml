@@ -33,7 +33,9 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.BUGSBUNNY_REGISTRY_URL }}/bugs-bunny:${{ github.sha }}
+          tags: |
+            ${{ secrets.BUGSBUNNY_REGISTRY_USERNAME }}/gamingnotif:${{ github.sha }}
+            ${{ secrets.BUGSBUNNY_REGISTRY_USERNAME }}/gamingnotif:latest
 
       # 3️⃣ Log in to Azure
       - name: Azure Login
@@ -49,4 +51,4 @@ jobs:
         with:
           containerAppName: bugs-bunny
           resourceGroup: BugsBunny_group
-          imageToDeploy: ${{ secrets.BUGSBUNNY_REGISTRY_URL }}/bugs-bunny:${{ github.sha }}
+          imageToDeploy: ${{ secrets.BUGSBUNNY_REGISTRY_USERNAME }}/gamingnotif:${{ github.sha }}
