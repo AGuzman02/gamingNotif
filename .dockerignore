@@ -1,0 +1,51 @@
+# Git
+.git
+.gitignore
+README.md
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+.pytest_cache/
+
+# Virtual environment
+bot-env/
+venv/
+env/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Environment files (will be passed as secrets)
+.env
+.env.local
+.env.production
+
+# GitHub workflows (not needed in container)
+.github/
+
+# JSON data files (if they contain sensitive data)
+arrival_log.json
+gameplay_time.json
+
+# Docker files
+Dockerfile
+.dockerignore
+
+# Documentation
+*.md
