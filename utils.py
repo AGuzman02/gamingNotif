@@ -60,7 +60,8 @@ async def handleVoiceJoin(member, db: DatabaseQueries):
         if await db.newMember(member):
             await db.logArrivalTime(member)
             return
-        return False
+    await db.newMemberToGuild(member, member.guild)
+    return False
         
 
 async def handleVoiceLeave(member, db: DatabaseQueries):

@@ -25,6 +25,13 @@ class DatabaseQueries:
         except Exception as e:
             print(f"Error inserting member {member.name}: {e}")
             return False
+
+    async def newMemberToGuild(self, guild, member):
+        try:
+            self.supabase.table("MembersGuild").upsert({"membersId": member.id, "guildId" : guild.id}).execute()
+        except Exception as e:
+            print(f"Error linking {member.name} to guild {guild.name}: {e}")
+            return False
         
     async def logArrivalTime(self, member) -> bool:
         # Insert member into arrival time
