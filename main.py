@@ -15,10 +15,6 @@ intents.voice_states = True
 intents.guilds = True
 bugs = discord.Client(intents=intents)
 
-# Configuration
-log_file = 'arrival_log.json'
-gameplay_time_file = 'gameplay_time.json'
-
 # Initialize managers
 notification_manager = NotificationManager()
 
@@ -33,7 +29,7 @@ supabase: Client = create_client(dbUrl, dbKey)
 db = DatabaseQueries(supabase)
 
 # Register events
-bot_events = BotEvents(bugs, notification_manager, log_file, gameplay_time_file, db)
+bot_events = BotEvents(bugs, notification_manager, db)
 
 # Start the bot
 if __name__ == "__main__":
