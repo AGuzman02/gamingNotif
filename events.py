@@ -3,11 +3,9 @@ from utils import NotificationManager, is_user_joining_voice, is_second_person_i
 from queries import DatabaseQueries
 
 class BotEvents:
-    def __init__(self, bot, notification_manager, log_file, gameplay_time_file, db: DatabaseQueries):
+    def __init__(self, bot, notification_manager, db: DatabaseQueries):
         self.bot = bot
         self.notification_manager = notification_manager
-        self.log_file = log_file
-        self.gameplay_time_file = gameplay_time_file
         self.db = db
         
         # Register all event handlers
