@@ -53,10 +53,9 @@ def is_user_leaving_voice(before, after):
 
 async def handleVoiceJoin(member, db: DatabaseQueries):
     """Handle new user by checking and inserting into DB"""
-    if await db.newMember(member):
-        await db.newMemberToGuild(member, member.guild)
-        await db.logArrivalTime(member)
-    return False
+    await db.newMember(member)
+    await db.newMemberToGuild(member, member.guild)
+    await db.logArrivalTime(member)
         
 
 async def handleVoiceLeave(member, db: DatabaseQueries):
