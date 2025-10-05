@@ -1,5 +1,5 @@
 import discord
-from utils import NotificationManager, is_user_joining_voice, is_second_person_in_channel, is_user_leaving_voice, handleVoiceJoin, handleVoiceLeave
+from utils import *
 from queries import DatabaseQueries
 
 class BotEvents:
@@ -43,4 +43,8 @@ class BotEvents:
         
         if is_user_leaving_voice(before, after):
             await handleVoiceLeave(member, self.db)
-            
+
+    async def on_guild_join(self, guild):
+        """Register a new guild in the db"""
+        if await handleNewGuild(guild):
+            print(f"Guild {guild.name} was succesfully added into the db")

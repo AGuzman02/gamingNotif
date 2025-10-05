@@ -60,7 +60,8 @@ async def handleVoiceJoin(member, db: DatabaseQueries):
         if await db.newMember(member):
             await db.logArrivalTime(member)
             return
-        return False
+    await db.newMemberToGuild(member, member.guild)
+    return False
         
 
 async def handleVoiceLeave(member, db: DatabaseQueries):
@@ -90,3 +91,5 @@ def _format_duration(seconds: float) -> str:
     else:
         return f"{minutes:02d}:{secs:02d}"
 
+async def handleNewGuild(guild, db): 
+    return await db.registerGuild(guild)
