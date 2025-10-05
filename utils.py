@@ -90,3 +90,5 @@ def _format_duration(seconds: float) -> str:
     else:
         return f"{minutes:02d}:{secs:02d}"
 
+async def handleNewGuild(guild, db): 
+    return await db.registerGuild(guild)

@@ -2,7 +2,7 @@ from supabase import Client
 from typing import Optional, List, Dict
 import time
 from datetime import datetime
-from discord import Member
+from discord import Member, Guild
 
 class DatabaseQueries:
     def __init__(self, supabase_client: Client):
@@ -64,3 +64,17 @@ class DatabaseQueries:
         except Exception as e:
             print(f"Error calculating game time for {member.name}: {e}")
             return False
+        
+    async def registerGuild(self, guild: Guild) -> bool:
+        try:
+            self.supabase.table("Guild").upsert({
+                "guildId" : guild.id, "guildName": guild.name,
+            }).execute()
+            return True
+        except Exception as e:
+            print(f"There was an error on registering this guild {guild.name}: {e}")
+            return False
+        
+
+
+
