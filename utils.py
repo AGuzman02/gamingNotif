@@ -22,7 +22,7 @@ class NotificationManager:
     
     async def send_notifications(self, channel):
         """Send notifications to all DM group members"""
-        membersStr = ", ".join([member.name for member in channel.members])
+        membersStr = " and ".join([member.name for member in channel.members])
         for group_member in self.dmGroup:
             if group_member in channel.members:
                 continue
