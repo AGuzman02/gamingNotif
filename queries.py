@@ -82,6 +82,21 @@ class DatabaseQueries:
             print(f"There was an error on registering this guild {guild.name}: {e}")
             return False
         
+    async def getCoolDown(self, guild: Guild):
+        try:
+            self.supabase.table("Guild").select("Cooldown").eq("guildId", guild.id).execute()
+        except Exception as e:
+            print(f"There was an error getting the cooldown for {guild.name}: {e}")
+            return False
+        
+    async def updateCoolDown(self, guild: Guild):
+        try:
+            self.supabase.table("Guild").update({
+                "Cooldown" : time.time()
+            }).eq("guildId", guild.id).execute()
+        except Exception as e:
+            print(f"There was an error updating {guild.name}'s cooldown: {e}")
+            return False
 
 
 

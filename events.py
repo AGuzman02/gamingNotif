@@ -15,6 +15,7 @@ class BotEvents:
         """Register all event handlers with the bot"""
         self.bot.event(self.on_ready)
         self.bot.event(self.on_voice_state_update)
+        self.bot.event(self.on_guild_join)
     
     async def on_ready(self):
         print(f'We have logged in as {self.bot.user}')
@@ -27,18 +28,16 @@ class BotEvents:
     
     async def on_voice_state_update(self, member, before, after):
         """Handle voice state updates"""
-        # Only log arrival time when joining
-        # await self.db.logArrivalTime(member)
 
         if is_user_joining_voice(before, after):
             await handleVoiceJoin(member, self.db)
             if is_second_person_in_channel(after.channel):
                 # Check cooldown
-                if self.notification_manager.is_on_cooldown():
+                if await self.notification_manager.is_on_cooldown(member.guild):
                     print("Global cooldown active")
                     return
                 # Update cooldown and send notifications
-                self.notification_manager.update_cooldown()
+                await self.notification_manager.update_cooldown(member.guild)
                 await self.notification_manager.send_notifications(after.channel)
         
         if is_user_leaving_voice(before, after):
