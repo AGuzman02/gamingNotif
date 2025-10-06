@@ -5,6 +5,7 @@ from utils import NotificationManager
 from events import BotEvents
 from queries import DatabaseQueries
 from supabase import create_client, Client
+from discord_logger import setup_discord_logging
 
 # Setup Discord client
 intents = discord.Intents.default()
@@ -29,8 +30,11 @@ db = DatabaseQueries(supabase)
 # Initialize managers
 notification_manager = NotificationManager(db)
 
-# Register events
-bot_events = BotEvents(bugs, notification_manager, db)
+# Setup Discord logging
+discord_logger = setup_discord_logging(bugs, 1422756400584724622, "testingchannel")
+
+# Register events (pass discord_logger to events)
+bot_events = BotEvents(bugs, notification_manager, db, discord_logger)
 
 # Start the bot
 if __name__ == "__main__":

@@ -3,10 +3,11 @@ from utils import *
 from queries import DatabaseQueries
 
 class BotEvents:
-    def __init__(self, bot, notification_manager, db: DatabaseQueries):
+    def __init__(self, bot, notification_manager, db: DatabaseQueries, discord_logger=None):
         self.bot = bot
         self.notification_manager = notification_manager
         self.db = db
+        self.discord_logger = discord_logger
         
         # Register all event handlers
         self.register_events()
@@ -19,6 +20,12 @@ class BotEvents:
     
     async def on_ready(self):
         print(f'We have logged in as {self.bot.user}')
+        
+        # Setup Discord logging
+        if self.discord_logger:
+            setup_success = await self.discord_logger.setup()
+            if setup_success:
+                self.discord_logger.override_print()  # Override print function
         
         # Get the guild (server)
         guild = self.bot.guilds[0]  # Assuming first guild

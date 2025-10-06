@@ -36,7 +36,7 @@ class DatabaseQueries:
     async def logArrivalTime(self, member) -> bool:
         # Insert member into arrival time
         try:
-            self.supabase.table("timeLog").upsert([{"memberId" : member.id}]).execute()
+            self.supabase.table("TimeLog").upsert([{"memberId" : member.id}]).execute()
             return True
         except Exception as e:
             print(f"Error time log {member.name}: {e}")
@@ -44,9 +44,9 @@ class DatabaseQueries:
     
     async def logLeaveTime(self, member) -> bool:
         try:
-            data = self.supabase.table("timeLog").select("id").eq("memberId", member.id).order("arrivalTime", desc=True).limit(1).execute()
+            data = self.supabase.table("TimeLog").select("id").eq("memberId", member.id).order("arrivalTime", desc=True).limit(1).execute()
             timeId = data.data[0]["id"]
-            self.supabase.table("timeLog").update({"leavingTime": "now()"}).eq("id", timeId).execute()
+            self.supabase.table("TimeLog").update({"leavingTime": "now()"}).eq("id", timeId).execute()
             return True
         except Exception as e:
             print(f"Error leaving time log {member.name}: {e}")
