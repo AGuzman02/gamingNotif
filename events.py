@@ -39,7 +39,7 @@ class BotEvents:
                     return
                 # Update cooldown and send notifications
                 self.notification_manager.update_cooldown()
-                await self.notification_manager.send_notifications(member, after.channel.name)
+                await self.notification_manager.send_notifications(after.channel)
         
         if is_user_leaving_voice(before, after):
             await handleVoiceLeave(member, self.db)

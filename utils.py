@@ -20,11 +20,14 @@ class NotificationManager:
         """Update the last notification time"""
         self.last_notification_time = time.time()
     
-    async def send_notifications(self, member, channel_name):
+    async def send_notifications(self, channel):
         """Send notifications to all DM group members"""
+        membersStr = ", ".join([member.name for member in channel.members])
         for group_member in self.dmGroup:
+            if group_member in channel.members:
+                continue
             try:
-                await group_member.send(f'Gaming time in "{channel_name}" with {member.name}!')
+                await group_member.send(f'Gaming time in "{channel.name}" with {membersStr}!')
             except discord.Forbidden:
                 print(f"Cannot send DM to {group_member.name}")
     
