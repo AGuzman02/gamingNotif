@@ -18,15 +18,15 @@ class DatabaseQueries:
             
     async def newMember(self, member: Member) -> bool:
         try:
-          self.supabase.table("Members").insert([
-              {"memberId": member.id, "name" : member.name, "guildId" : member.guild.id}
+          self.supabase.table("Members").upsert([
+              {"memberId": member.id, "name" : member.name}
           ]).execute()
           return True
         except Exception as e:
             print(f"Error inserting member {member.name}: {e}")
             return False
 
-    async def newMemberToGuild(self, guild, member):
+    async def newMemberToGuild(self, member, guild):
         try:
             self.supabase.table("MembersGuild").upsert({"membersId": member.id, "guildId" : guild.id}).execute()
         except Exception as e:
