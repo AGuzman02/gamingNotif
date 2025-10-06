@@ -84,7 +84,8 @@ class DatabaseQueries:
         
     async def getCoolDown(self, guild: Guild):
         try:
-            self.supabase.table("Guild").select("Cooldown").eq("guildId", guild.id).execute()
+            result = self.supabase.table("Guild").select("Cooldown").eq("guildId", guild.id).execute()
+            return result
         except Exception as e:
             print(f"There was an error getting the cooldown for {guild.name}: {e}")
             return False
