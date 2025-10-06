@@ -18,15 +18,15 @@ class DatabaseQueries:
             
     async def newMember(self, member: Member) -> bool:
         try:
-          self.supabase.table("Members").insert([
-              {"memberId": member.id, "name" : member.name, "guildId" : member.guild.id}
+          self.supabase.table("Members").upsert([
+              {"memberId": member.id, "name" : member.name}
           ]).execute()
           return True
         except Exception as e:
             print(f"Error inserting member {member.name}: {e}")
             return False
 
-    async def newMemberToGuild(self, guild, member):
+    async def newMemberToGuild(self, member, guild):
         try:
             self.supabase.table("MembersGuild").upsert({"membersId": member.id, "guildId" : guild.id}).execute()
         except Exception as e:
@@ -82,6 +82,22 @@ class DatabaseQueries:
             print(f"There was an error on registering this guild {guild.name}: {e}")
             return False
         
+    async def getCoolDown(self, guild: Guild):
+        try:
+            result = self.supabase.table("Guild").select("Cooldown").eq("guildId", guild.id).execute()
+            return result
+        except Exception as e:
+            print(f"There was an error getting the cooldown for {guild.name}: {e}")
+            return False
+        
+    async def updateCoolDown(self, guild: Guild):
+        try:
+            self.supabase.table("Guild").update({
+                "Cooldown" : time.time()
+            }).eq("guildId", guild.id).execute()
+        except Exception as e:
+            print(f"There was an error updating {guild.name}'s cooldown: {e}")
+            return False
 
 
 

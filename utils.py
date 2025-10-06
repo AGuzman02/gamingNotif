@@ -6,25 +6,31 @@ import json
 from queries import DatabaseQueries
 
 class NotificationManager:
-    def __init__(self):
+    def __init__(self, db):
         self.last_notification_time = 0
         self.COOLDOWN_SECONDS = 3600 * 4
         self.dmGroup = []
+        self.db = db
     
-    def is_on_cooldown(self):
+    async def is_on_cooldown(self, guild):
         """Check if notifications are on cooldown"""
         current_time = time.time()
-        return current_time - self.last_notification_time < self.COOLDOWN_SECONDS
+        cooldown = await self.db.getCoolDown(guild)
+        if cooldown:
+            return current_time - cooldown.data[0] < self.COOLDOWN_SECONDS
     
-    def update_cooldown(self):
+    async def update_cooldown(self, guild):
         """Update the last notification time"""
-        self.last_notification_time = time.time()
+        await self.db.updateCoolDown(guild)
     
-    async def send_notifications(self, member, channel_name):
+    async def send_notifications(self, channel):
         """Send notifications to all DM group members"""
+        membersStr = " and ".join([member.name for member in channel.members])
         for group_member in self.dmGroup:
+            if group_member in channel.members:
+                continue
             try:
-                await group_member.send(f'Gaming time in "{channel_name}" with {member.name}!')
+                await group_member.send(f'Gaming time in "{channel.name}" with {membersStr}!')
             except discord.Forbidden:
                 print(f"Cannot send DM to {group_member.name}")
     
@@ -37,7 +43,6 @@ class NotificationManager:
         else:
             print(f"{role_name} role not found")
             return False
-
 
 def is_user_joining_voice(before, after):
     """Check if user is joining a voice channel"""

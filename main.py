@@ -15,8 +15,6 @@ intents.voice_states = True
 intents.guilds = True
 bugs = discord.Client(intents=intents)
 
-# Initialize managers
-notification_manager = NotificationManager()
 
 # Load environment variables
 load_dotenv()
@@ -27,6 +25,9 @@ dbKey = os.getenv('DATABASE_KEY')
 # Initialize database connection (global)
 supabase: Client = create_client(dbUrl, dbKey)
 db = DatabaseQueries(supabase)
+
+# Initialize managers
+notification_manager = NotificationManager(db)
 
 # Register events
 bot_events = BotEvents(bugs, notification_manager, db)
