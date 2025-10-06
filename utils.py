@@ -50,7 +50,7 @@ def is_user_joining_voice(before, after):
 
 def is_second_person_in_channel(channel):
     """Check if this makes the channel have exactly 2 people"""
-    return len(channel.members) == 1
+    return len(channel.members) == 2
 
 def is_user_leaving_voice(before, after):
     """Check if user is leaving a voice channel"""
