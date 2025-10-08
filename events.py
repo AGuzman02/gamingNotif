@@ -17,6 +17,7 @@ class BotEvents:
         self.bot.event(self.on_ready)
         self.bot.event(self.on_voice_state_update)
         self.bot.event(self.on_guild_join)
+        self.bot.event(self.on_member_update) 
     
     async def on_ready(self):
         print(f'We have logged in as {self.bot.user}')
@@ -54,3 +55,19 @@ class BotEvents:
         """Register a new guild in the db"""
         if await handleNewGuild(guild):
             print(f"Guild {guild.name} was succesfully added into the db")
+
+    async def on_member_update(self, before, after):
+        """Auto-update DM group when DM role changes"""
+        before_roles = {role.name for role in before.roles}
+        after_roles = {role.name for role in after.roles}
+        
+        # Check if DM role was added or removed
+        if "DM" in after_roles and "DM" not in before_roles:
+            # DM role added
+            self.notification_manager.setup_dm_group(after.guild, 'DM')
+            print(f"✅ {after.name} added to DM notifications")
+            
+        elif "DM" in before_roles and "DM" not in after_roles:
+            # DM role removed
+            self.notification_manager.setup_dm_group(after.guild, 'DM')
+            print(f"❌ {after.name} removed from DM notifications")
