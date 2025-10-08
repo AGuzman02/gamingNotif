@@ -16,6 +16,7 @@ class NotificationManager:
         """Check if notifications are on cooldown"""
         current_time = time.time()
         cooldown = await self.db.getCoolDown(guild)
+        print(cooldown)
         if cooldown:
             return current_time - cooldown.data[0] < self.COOLDOWN_SECONDS
     
