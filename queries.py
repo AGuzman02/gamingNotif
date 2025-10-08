@@ -28,7 +28,7 @@ class DatabaseQueries:
 
     async def newMemberToGuild(self, member, guild):
         try:
-            self.supabase.table("MembersGuild").upsert({"membersId": member.id, "guildId" : guild.id}).execute()
+            self.supabase.table("MembersGuild").upsert({"memberId": member.id, "guildId" : guild.id}).execute()
         except Exception as e:
             print(f"Error linking {member.name} to guild {guild.name}: {e}")
             return False
@@ -98,6 +98,31 @@ class DatabaseQueries:
         except Exception as e:
             print(f"There was an error updating {guild.name}'s cooldown: {e}")
             return False
+        
+    async def add_to_dm_group(self, guild: Guild, member: Member) -> bool:
+        try:
+            self.supabase.table("MembersGuild").update({
+                "DM" : 1
+            }).eq("guildId", guild.id).eq("memberId", member.id).execute()
+            return True
+        except Exception as e:
+            print(f"Error adding member {member.id} to DM group for guild {guild.id}: {e}")
+            return False
 
+    async def remove_from_dm_group(self, guild: Guild, member: Member) -> bool:
+        try:
+            self.supabase.table("MembersGuild").update({
+                "DM" : 0
+            }).eq("guildId", guild.id).eq("memberId", member.id).execute()
+            return True
+        except Exception as e:
+            print(f"Error removing member {member.id} from DM group for guild {guild.id}: {e}")
+            return False
 
-
+    async def get_dm_group(self, guild: int) -> list:
+        try:
+            result = self.supabase.table("MembersGuild").select("memberId").eq("guildId", guild.id).eq("DM", 1).execute()
+            return result.data
+        except Exception as e:
+            print(f"Error fetching DM group for guild {guild.id}: {e}")
+            return []

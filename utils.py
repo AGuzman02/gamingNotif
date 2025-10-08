@@ -9,7 +9,6 @@ class NotificationManager:
     def __init__(self, db):
         self.last_notification_time = 0
         self.COOLDOWN_SECONDS = 3600 * 4
-        self.dmGroup = []
         self.db = db
     
     async def is_on_cooldown(self, guild):
@@ -26,23 +25,21 @@ class NotificationManager:
     async def send_notifications(self, channel):
         """Send notifications to all DM group members"""
         membersStr = " and ".join([member.name for member in channel.members])
-        for group_member in self.dmGroup:
-            if group_member in channel.members:
+        result = await self.db.get_dm_group(channel.guild)
+
+        if len(result) < 1: 
+            return False
+
+        for members in result:
+            member = channel.guild.get_member(members["memberId"])
+            if member in channel.members or not member:
                 continue
             try:
-                await group_member.send(f'Gaming time in "{channel.name}" with {membersStr}!')
+                await member.send(f'Gaming time in "{channel.name}" with {membersStr}!')
             except discord.Forbidden:
-                print(f"Cannot send DM to {group_member.name}")
-    
-    def setup_dm_group(self, guild, role_name='DM'):
-        """Setup the DM group from guild role"""
-        role = discord.utils.get(guild.roles, name=role_name)
-        if role:
-            self.dmGroup = role.members
-            return True
-        else:
-            print(f"{role_name} role not found")
-            return False
+                print(f"Cannot send DM to {member.name}")
+                return False
+        return True
 
 def is_user_joining_voice(before, after):
     """Check if user is joining a voice channel"""
@@ -50,7 +47,7 @@ def is_user_joining_voice(before, after):
 
 def is_second_person_in_channel(channel):
     """Check if this makes the channel have exactly 2 people"""
-    return len(channel.members) == 2
+    return len(channel.members) == 1
 
 def is_user_leaving_voice(before, after):
     """Check if user is leaving a voice channel"""

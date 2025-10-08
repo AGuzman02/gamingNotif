@@ -27,12 +27,6 @@ class BotEvents:
             setup_success = await self.discord_logger.setup()
             if setup_success:
                 self.discord_logger.override_print()  # Override print function
-        
-        # Get the guild (server)
-        guild = self.bot.guilds[0]  # Assuming first guild
-        
-        # Setup DM group
-        self.notification_manager.setup_dm_group(guild, 'DM')
     
     async def on_voice_state_update(self, member, before, after):
         """Handle voice state updates"""
@@ -46,7 +40,8 @@ class BotEvents:
                     return
                 # Update cooldown and send notifications
                 await self.notification_manager.update_cooldown(member.guild)
-                await self.notification_manager.send_notifications(after.channel)
+                if (await self.notification_manager.send_notifications(after.channel)):
+                    print(f"Succesfully sent DMs to members in {member.guild.name}")
         
         if is_user_leaving_voice(before, after):
             await handleVoiceLeave(member, self.db)
@@ -60,14 +55,12 @@ class BotEvents:
         """Auto-update DM group when DM role changes"""
         before_roles = {role.name for role in before.roles}
         after_roles = {role.name for role in after.roles}
-        
-        # Check if DM role was added or removed
+
         if "DM" in after_roles and "DM" not in before_roles:
             # DM role added
-            self.notification_manager.setup_dm_group(after.guild, 'DM')
+            await self.db.add_to_dm_group(after.guild, after)
             print(f"✅ {after.name} added to DM notifications")
-            
         elif "DM" in before_roles and "DM" not in after_roles:
             # DM role removed
-            self.notification_manager.setup_dm_group(after.guild, 'DM')
+            await self.db.remove_from_dm_group(after.guild, after)
             print(f"❌ {after.name} removed from DM notifications")

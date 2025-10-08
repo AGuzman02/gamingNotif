@@ -16,7 +16,6 @@ intents.voice_states = True
 intents.guilds = True
 bugs = discord.Client(intents=intents)
 
-
 # Load environment variables
 load_dotenv()
 token = os.getenv('DISCORD_TOKEN') 
