@@ -125,6 +125,12 @@ class DatabaseQueries:
             return result.data
         except Exception as e:
             print(f"Error fetching DM group for guild {guild.id}: {e}")
+<<<<<<< Updated upstream
+=======
+<<<<<<< Updated upstream
+            return []
+=======
+>>>>>>> Stashed changes
             return []
 
     async def getTopUsersByGuild(self, guildId, limit):
@@ -158,12 +164,18 @@ class DatabaseQueries:
                 .eq("guildId", guild.id)\
                 .eq("memberId", member.id)\
                 .execute()
+<<<<<<< Updated upstream
             if result.data and len(result.data) > 0:
                 return result.data[0]["DM"]
             else:
                 return None
         except Exception as e:
             print(f"Error fetching top users for guild {guild.Id}: {e}")
+=======
+            return result.data[0]["DM"]
+        except Exception as e:
+            print(f"Error getting the DM Status for {member.name}: {e}")
+>>>>>>> Stashed changes
             return None
 
     async def existsMembersGuild(self, member: Member, guild: Guild):
@@ -171,5 +183,11 @@ class DatabaseQueries:
             data = self.supabase.table("MembersGuild").select("memberId", count="exact").eq("memberId", member.id).eq("guildId", guild.id).execute()
             return data.count > 0  
         except Exception as e:
+<<<<<<< Updated upstream
             print(f"Error fetching top users for guild {guild.Id}: {e}")
             return False
+=======
+            print(f"{member.name} does not exist in {guild.name}: {e}")
+            return False
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
