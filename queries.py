@@ -158,7 +158,10 @@ class DatabaseQueries:
                 .eq("guildId", guild.id)\
                 .eq("memberId", member.id)\
                 .execute()
-            return result.data[0]["DM"]
+            if result.data and len(result.data) > 0:
+                return result.data[0]["DM"]
+            else:
+                return None
         except Exception as e:
             print(f"Error fetching top users for guild {guild.Id}: {e}")
             return None
