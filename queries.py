@@ -126,3 +126,50 @@ class DatabaseQueries:
         except Exception as e:
             print(f"Error fetching DM group for guild {guild.id}: {e}")
             return []
+
+    async def getTopUsersByGuild(self, guildId, limit):
+        try:
+            result = self.supabase.table("MembersGuild")\
+            .select("memberId, Members(gameTime, name)")\
+            .eq("guildId", guildId)\
+            .not_.is_("Members.gameTime", "null")\
+            .order("Members.gameTime", desc=True)\
+            .limit(limit)\
+            .execute()
+
+            # Transform the data for easier use
+            top_users = []
+            for row in result.data:
+                if row["Members"]:  # Check if join succeeded
+                    top_users.append({
+                        "memberId": row["memberId"],
+                        "gameTime": row["Members"]["gameTime"],
+                        "name": row["Members"]["name"]
+                    }) 
+            return top_users
+        except Exception as e:
+            print(f"Error fetching top users for guild {guildId}: {e}")
+            return []
+    
+    async def getDmStatus(self, guild: Guild, member: Member):
+        try:
+            result = self.supabase.table("MembersGuild")\
+                .select("DM")\
+                .eq("guildId", guild.id)\
+                .eq("memberId", member.id)\
+                .execute()
+            if result.data and len(result.data) > 0:
+                return result.data[0]["DM"]
+            else:
+                return None
+        except Exception as e:
+            print(f"Error fetching top users for guild {guild.Id}: {e}")
+            return None
+
+    async def existsMembersGuild(self, member: Member, guild: Guild):
+        try:
+            data = self.supabase.table("MembersGuild").select("memberId", count="exact").eq("memberId", member.id).eq("guildId", guild.id).execute()
+            return data.count > 0  
+        except Exception as e:
+            print(f"Error fetching top users for guild {guild.Id}: {e}")
+            return False

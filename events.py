@@ -48,7 +48,7 @@ class BotEvents:
 
     async def on_guild_join(self, guild):
         """Register a new guild in the db"""
-        if await handleNewGuild(guild, self.db):
+        if await handleNewGuild(guild):
             print(f"Guild {guild.name} was succesfully added into the db")
 
     async def on_member_update(self, before, after):
