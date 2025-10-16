@@ -27,7 +27,7 @@ COPY events.py .
 COPY utils.py .
 COPY queries.py .
 COPY discord_logger.py .
-COPY botCommands.py
+COPY botCommands.py .
 
 # Copy any additional files if they exist
 COPY *.json* ./
