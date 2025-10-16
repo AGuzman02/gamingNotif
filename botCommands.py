@@ -102,25 +102,31 @@ class BotCommands:
     async def dm_toggle_command(self, ctx):
         """Toggle DM notifications for yourself"""
         try:
-            if await self.db.existsMembersGuild(ctx.author, ctx.guild):
-                status = await self.db.getDmStatus(ctx.guild, ctx.author)
-            
-                if status:
-                    await self.db.remove_from_dm_group(ctx.guild, ctx.author)
-                else:
-                    await self.db.add_to_dm_group(ctx.guild, ctx.author)
+            if not await self.db.existsMember(ctx.author):
+                await self.db.newMember(ctx.author)
 
-            await ctx.send(f"Your status went from DM: {status} to DM:{not status}  ")
-                
-        except Exception as e:
-            await ctx.send(f"❌ Error toggling DM: {e}")
-            print(f"Error in dm_toggle command: {e}")
+            if not await self.db.existsMembersGuild(ctx.author, ctx.guild):
+                await self.db.newMemberToGuild(ctx.author, ctx.guild)
             
-            # Debug information
-            print(f"Debug info:")
-            print(f"  User: {ctx.author.name} ({ctx.author.id})")
-            print(f"  Guild: {ctx.guild.name} ({ctx.guild.id})") 
-    
+            current_status = await self.db.getDmStatus(ctx.guild, ctx.author)
+            
+            if current_status:
+                await self.db.remove_from_dm_group(ctx.guild, ctx.author)
+            else:
+                await self.db.add_to_dm_group(ctx.guild, ctx.author)
+
+            await ctx.send(f"Your status went from DM: {current_status} to DM:{not current_status} for {ctx.guild.name}")
+        except Exception as e:
+            await ctx.send(f"Error toggling DM: {e}")
+            
+            
+            
+            
+            
+            
+            
+            
+            
     async def cooldown_status_command(self, ctx):
         """Check notification cooldown status (Manage Server permission)"""
         try:

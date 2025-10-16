@@ -163,7 +163,7 @@ class DatabaseQueries:
             else:
                 return None
         except Exception as e:
-            print(f"Error fetching top users for guild {guild.Id}: {e}")
+            print(f"Error fetching top users for guild {guild.id}: {e}")
             return None
 
     async def existsMembersGuild(self, member: Member, guild: Guild):
@@ -171,5 +171,5 @@ class DatabaseQueries:
             data = self.supabase.table("MembersGuild").select("memberId", count="exact").eq("memberId", member.id).eq("guildId", guild.id).execute()
             return data.count > 0  
         except Exception as e:
-            print(f"Error fetching top users for guild {guild.Id}: {e}")
+            print(f"Error fetching top users for guild {guild.id}: {e}")
             return False
