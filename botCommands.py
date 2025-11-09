@@ -4,7 +4,7 @@ from discord.ext import commands
 from discord import app_commands
 from typing import Optional
 import time
-from utils import _format_duration
+from utils import formatLeaderBoard
 from queries import DatabaseQueries
 
 class BotCommands:
@@ -87,12 +87,22 @@ class BotCommands:
     async def leaderboard_command(self, ctx):
         """Show voice time leaderboard for the server"""
         try:
+            
+            medals = ["🥇", "🥈", "🥉"]
+            description = "━━━━━━━━━━━━━━━━━━━ \n"
+            formattedLB = await formatLeaderBoard(self.db, ctx.guild.id)
+
+            for i in range(len(formattedLB)):
+                description += f"{medals[i]} {formattedLB[i]} \n"
+
+            description += "━━━━━━━━━━━━━━━━━━━"
+            
             embed = discord.Embed(
-                title=f"🏆 Voice Leaderboard - {ctx.guild.name}",
+                title=f"🏆 Virginity Leaderboard - {ctx.guild.name}",
+                description=description,
                 color=0xffd700
             )
-            embed.add_field(name="Status", value="Leaderboard feature coming soon!", inline=False)
-            
+
             await ctx.send(embed=embed)
             
         except Exception as e:
@@ -118,14 +128,6 @@ class BotCommands:
             await ctx.send(f"Your status went from DM: {current_status} to DM:{not current_status} for {ctx.guild.name}")
         except Exception as e:
             await ctx.send(f"Error toggling DM: {e}")
-            
-            
-            
-            
-            
-            
-            
-            
             
     async def cooldown_status_command(self, ctx):
         """Check notification cooldown status (Manage Server permission)"""

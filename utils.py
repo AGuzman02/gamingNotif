@@ -76,6 +76,24 @@ async def handleVoiceLeave(member, db: DatabaseQueries):
         print(f"Error handling voice leave for {member.name}: {e}")
         return None
 
+async def formatLeaderBoard(db: DatabaseQueries, guildId : int, limit = 3):
+    # db query
+    # Parse query
+    # format duration
+    # decorate? mkdn hanlded by disc?
+    usersTimeTuple = await db.getTopUsersByGuild(guildId, limit)
+
+    leaderBoardPlaces = []
+
+    for user in usersTimeTuple:
+        if user == usersTimeTuple[-1]:
+            leaderBoardPlaces.append(f"**{user[0].upper()}** has wasted **{_format_duration(user[1])}** hours of their life")
+            break
+            
+        leaderBoardPlaces.append(f"**{user[0].upper()}** has wasted **{_format_duration(user[1])}** hours of their life \n")
+    
+    return leaderBoardPlaces 
+
 def _format_duration(seconds: float) -> str:
     """Format seconds into MM:SS or HH:MM:SS"""
     hours = int(seconds // 3600)
