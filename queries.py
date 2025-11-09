@@ -132,21 +132,16 @@ class DatabaseQueries:
             result = self.supabase.table("MembersGuild")\
             .select("memberId, Members(gameTime, name)")\
             .eq("guildId", guildId)\
-            .not_.is_("Members.gameTime", "null")\
-            .order("Members.gameTime", desc=True)\
             .limit(limit)\
             .execute()
 
             # Transform the data for easier use
             top_users = []
+
             for row in result.data:
                 if row["Members"]:  # Check if join succeeded
-                    top_users.append({
-                        "memberId": row["memberId"],
-                        "gameTime": row["Members"]["gameTime"],
-                        "name": row["Members"]["name"]
-                    }) 
-            return top_users
+                    top_users.append([ row["Members"]["name"], row["Members"]["gameTime"] ])
+            return sorted(top_users, key=lambda item: item[1], reverse=True)
         except Exception as e:
             print(f"Error fetching top users for guild {guildId}: {e}")
             return []
