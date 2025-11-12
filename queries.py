@@ -129,19 +129,20 @@ class DatabaseQueries:
 
     async def getTopUsersByGuild(self, guildId, limit):
         try:
-            result = self.supabase.table("MembersGuild")\
-            .select("memberId, Members(gameTime, name)")\
-            .eq("guildId", guildId)\
-            .order("Members.gameTime", desc=True)\
+            result = self.supabase.table("Members")\
+            .select("name, gameTime, MembersGuild!inner(guildId, memberId)")\
+            .eq("MembersGuild.guildId", guildId)\
+            .order("gameTime", desc=True)\
             .limit(limit)\
             .execute()
+            print(result)
 
             # Transform the data for easier use
             top_users = []
 
             for row in result.data:
-                if row["Members"]:  # Check if join succeeded
-                    top_users.append([ row["Members"]["name"], row["Members"]["gameTime"] ])
+                print(row)
+                top_users.append([ row["name"], row["gameTime"] ])
             return top_users
         except Exception as e:
             print(f"Error fetching top users for guild {guildId}: {e}")
