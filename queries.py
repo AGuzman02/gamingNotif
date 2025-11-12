@@ -135,7 +135,6 @@ class DatabaseQueries:
             .order("gameTime", desc=True)\
             .limit(limit)\
             .execute()
-            print(result)
 
             # Transform the data for easier use
             top_users = []
