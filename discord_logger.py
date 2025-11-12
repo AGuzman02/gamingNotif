@@ -20,6 +20,7 @@ class DiscordLogger:
                 self.channel = discord.utils.get(guild.channels, name=self.channel_name)
                 if self.channel:
                     await self.log(f"🔧 Discord Logger initialized in {guild.name} -> #{self.channel_name}")
+                    await self.log(f"There is something off has this been updated?")
                     return True
                 else:
                     self.original_print(f"❌ Channel '{self.channel_name}' not found in guild {guild.name}")
