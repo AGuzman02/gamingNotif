@@ -141,7 +141,6 @@ class DatabaseQueries:
             top_users = []
 
             for row in result.data:
-                print(row)
                 top_users.append([ row["name"], row["gameTime"] ])
             return top_users
         except Exception as e:
